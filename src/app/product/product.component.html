@@ -4,7 +4,7 @@
       <div class="relative size-64 sm:size-72 lg:size-96">
         @if (product?.urlImg) {
         <img
-          class="object-contain object-center"
+          class="object-contain object-center relative"
           [ngSrc]="product?.urlImg ?? ''"
           alt="Product Image"
           priority
@@ -88,7 +88,7 @@
         }
       </div>
       <div
-        class="mt-5 text-gray-500 format-strong:text-gray-700 format-li:mb-2 format-p:mb-4"
+        class="mt-5 text-black-900 format-strong:text-black-700 format-li:mb-2 format-p:mb-4"
         [innerHTML]="product?.description"
       ></div>
       <div class="mt-5 flex gap-2">
@@ -96,7 +96,7 @@
           (click)="addToCart()"
           class="w-full rounded-md focus:ring-4 focus:ring-green-200 bg-gradient-to-tl from-[#06cf86] to-[#0b6142] text-white px-4 py-2 font-bold"
         >
-          Add To Cart
+          Añadir al Carrito
         </button>
         <button
           type="button"

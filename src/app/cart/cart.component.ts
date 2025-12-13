@@ -16,6 +16,7 @@ import { PaymentService } from '../core/services/payment.service';
     NgOptimizedImage,
   ],
   templateUrl: './cart.component.html',
+  styleUrl: './cart.component.css'
 })
 export class CartComponent implements OnInit {
   cartProducts?: CartProduct[];

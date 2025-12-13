@@ -4,6 +4,7 @@ import { ProductsService } from '../core/services/product.service';
 import { Product } from '../shared/models/product';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { CartProduct } from '../shared/models/cart-product';
+import { ProductCarrouselComponent } from "../shared/components/product-carrousel/product-carrousel.component";
 
 @Component({
   selector: 'app-product',
