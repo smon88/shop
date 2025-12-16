@@ -3,12 +3,11 @@
   [routerLink]="['products', product().productId]"
   class="transition-transform hover:scale-105 h-full bg-white rounded-md p-6 flex flex-col shadow-md items-center max-w-80"
 >
-  <div class="relative size-24">
+  <div class="relative w-24 h-24">
     <img
       class="object-contain object-center"
-      [ngSrc]="product().urlImg"
+      [src]="product().urlImg"
       alt="Product Image"
-      fill=""
     />
   </div>
   <div class="self-start mt-4 flex flex-col gap-1">
