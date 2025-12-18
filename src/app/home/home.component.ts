@@ -7,6 +7,7 @@ import { HomeProductComponent } from './components/home-product/home-product.com
 import { RouterLink } from '@angular/router';
 import { HomeProductLoadingComponent } from './components/home-product-loading/home-product-loading.component';
 import { CategoriesComponent } from "../shared/components/categories/categories.component";
+import { LoadingComponent } from "../shared/components/loading/loading.component";
 
 @Component({
   selector: 'app-home',
@@ -21,6 +22,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   pageIndex = 0;
   itemsPerSlide = 4;
   slides: any[][] = [];
+  isLoading: boolean = false;
 
   ngOnInit(): void {
     this.updateItemsPerSlide();
@@ -34,7 +36,6 @@ export class HomeComponent implements OnInit, OnDestroy {
       );
 
       this.buildSlides();
-
       setTimeout(() => {
         initFlowbite();
       }, 200);

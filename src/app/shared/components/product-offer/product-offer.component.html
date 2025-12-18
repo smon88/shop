@@ -85,11 +85,12 @@
       </a>
     </div>
   </div>
-  <div class="hidden sm:flex absolute -top-24 right-0 xl:right-24">
+  <div class="hidden sm:flex absolute -top-24 size-64 right-0 xl:right-24">
     <img
-      class="size-64 object-contain object-center"
-      src="{{ product().urlImg }}"
+      class="object-contain object-center relative"
+      [ngSrc]="product().urlImg"
       alt="item"
+      fill
     />
     <div
       class="rounded-full absolute top-6 right-8 bg-gradient-to-tl from-[#06cf86] to-[#0b6142] size-12 inline-flex items-center justify-center"

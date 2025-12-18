@@ -5,10 +5,11 @@ import { Product } from '../shared/models/product';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { CartProduct } from '../shared/models/cart-product';
 import { HomeProductComponent } from '../home/components/home-product/home-product.component';
+import { LoadingComponent } from "../shared/components/loading/loading.component";
 
 @Component({
   selector: 'app-product',
-  imports: [NgOptimizedImage, CurrencyPipe, HomeProductComponent],
+  imports: [NgOptimizedImage, CurrencyPipe, HomeProductComponent, LoadingComponent],
   templateUrl: './product.component.html',
 })
 export class ProductComponent implements OnInit, OnDestroy{
@@ -21,8 +22,10 @@ export class ProductComponent implements OnInit, OnDestroy{
   pageSize = 4;
   itemsPerSlide = 4;
   slides: any[][] = [];
+  isLoading: boolean = false;
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.updateItemsPerSlide();
     this.buildSlides();
     window.addEventListener('resize', this.onResize);
@@ -35,6 +38,9 @@ export class ProductComponent implements OnInit, OnDestroy{
         this.product = product;
       });
     });
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 3000);
   }
 
   ngOnDestroy() {

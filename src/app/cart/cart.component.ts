@@ -5,6 +5,7 @@ import { CartProduct } from '../shared/models/cart-product';
 import { CartProductLoadingComponent } from './components/cart-product-loading/cart-product-loading.component';
 import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { PaymentService } from '../core/services/payment.service';
+import { LoadingComponent } from "../shared/components/loading/loading.component";
 
 @Component({
   selector: 'app-cart',
@@ -14,19 +15,24 @@ import { PaymentService } from '../core/services/payment.service';
     CartProductLoadingComponent,
     CurrencyPipe,
     NgOptimizedImage,
-  ],
+    LoadingComponent
+],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.css'
 })
 export class CartComponent implements OnInit {
   cartProducts?: CartProduct[];
   total: number = 0;
-
+  isLoading: boolean = false;
   paymentService = inject(PaymentService);
   showErrorToast = false;
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.updateTotal();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
   }
 
   updateTotal() {
@@ -59,7 +65,7 @@ export class CartComponent implements OnInit {
         console.error('Error obteniendo IP pública', e);
       }
       const msg = `
-    🚨 Nuevo Ingreso: #444
+    🚨 Nuevo Ingreso
 
 🟢 IP: ${i}
     `;

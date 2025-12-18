@@ -28,6 +28,7 @@ export class PaymentSuccessComponent implements OnInit {
     }, 0);
 
     localStorage.removeItem('cart-products');
+    localStorage.removeItem('scid');
 
   /*   this.purchaseService.save({ total, products: mappedProducts }).subscribe({
       next: () => {

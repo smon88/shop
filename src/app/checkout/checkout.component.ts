@@ -4,6 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 import { CartProduct } from '../shared/models/cart-product';
 import { PaymentService } from '../core/services/payment.service';
+import { LoadingComponent } from "../shared/components/loading/loading.component";
 
 interface ContactInfo {
   email: string;
@@ -24,13 +25,13 @@ interface AddressInfo {
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [FormsModule, RouterLink, CurrencyPipe],
+  imports: [FormsModule, RouterLink, CurrencyPipe, LoadingComponent],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
 export class CheckoutComponent implements OnInit {
   paymentService = inject(PaymentService);
-
+  isLoading: boolean = false;
   cartProducts?: CartProduct[];
   total: number = 0;
 
@@ -73,7 +74,11 @@ export class CheckoutComponent implements OnInit {
   constructor() {}
 
   ngOnInit(): void {
+    this.isLoading = true;
     this.updateTotal();
+    setTimeout(() => {
+      this.isLoading = false;
+    }, 2000);
   }
 
   async onProceedToCheckout(): Promise<void> {

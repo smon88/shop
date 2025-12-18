@@ -1,11 +1,11 @@
 import { Component, input, OnInit } from '@angular/core';
 import { Product } from '../../models/product';
 import { RouterLink } from '@angular/router';
-import { CurrencyPipe } from '@angular/common';
+import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
 
 @Component({
   selector: 'app-product-offer',
-  imports: [RouterLink, CurrencyPipe],
+  imports: [NgOptimizedImage, RouterLink, CurrencyPipe],
   templateUrl: './product-offer.component.html',
 })
 export class ProductOfferComponent implements OnInit {
