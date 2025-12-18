@@ -10,7 +10,8 @@ import { CommonModule } from '@angular/common';
 })
 export class NavbarComponent implements OnInit {
   cartItems: number = 0;
- private intervalId?: number;
+  private intervalId?: number;
+  mobileMenuOpen = false;
 
   ngOnInit(): void {
     this.updateCartCount();
@@ -24,6 +25,15 @@ export class NavbarComponent implements OnInit {
   ngOnDestroy(): void {
     if (this.intervalId) window.clearInterval(this.intervalId);
   }
+
+  toggleMobileMenu() {
+    this.mobileMenuOpen = !this.mobileMenuOpen;
+  }
+
+  closeMobileMenu() {
+    this.mobileMenuOpen = false;
+  }
+  
 
   private updateCartCount(): void {
     const stored = localStorage.getItem('cart-products');

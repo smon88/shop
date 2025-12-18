@@ -1,6 +1,9 @@
 <section class="mt-4 max-w-screen-lg mx-auto">
+    <div class="mt-8 w-full h-[3vw] bg-white block rounded-md shadow-md">
+
+    </div>
     <article
-      class="mt-8 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center mb-8"
+      class="mt-3 grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 justify-center mb-8"
     >
       @defer { @for (product of products; track $index) {
       <app-products-list [product]="product" />

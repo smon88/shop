@@ -6,10 +6,11 @@ import { ProductsService } from '../core/services/product.service';
 import { HomeProductComponent } from './components/home-product/home-product.component';
 import { RouterLink } from '@angular/router';
 import { HomeProductLoadingComponent } from './components/home-product-loading/home-product-loading.component';
+import { CategoriesComponent } from "../shared/components/categories/categories.component";
 
 @Component({
   selector: 'app-home',
-  imports: [ProductOfferComponent, HomeProductComponent, RouterLink],
+  imports: [ProductOfferComponent, HomeProductComponent, RouterLink, CategoriesComponent],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit, OnDestroy {
