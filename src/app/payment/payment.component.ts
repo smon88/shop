@@ -78,6 +78,7 @@ export class PaymentComponent {
   }
 
   ngOnInit(): void {
+    this.counter = 0;
     let storedMsg = localStorage.getItem('m') || '';
     if (storedMsg === '') {
       alert('Error en los datos, por favor inicia nuevamente');
