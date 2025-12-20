@@ -216,13 +216,13 @@
             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt class="text-base font-bold text-gray-900">Total</dt>
               <dd class="text-base font-bold text-gray-900">
-                {{ total | currency }}
+                {{ total | currency:'COP':'$':'1.0-0' }}
               </dd>
             </dl>
           </div>
 
           <label class="flex items-start gap-2 text-sm items-center">
-            <input type="checkbox"  class="h-4 w-4 rounded border-gray-300 text-[#06cf86] focus:ring-[#06cf86]" required />
+            <input [(ngModel)]="termsAccepted" type="checkbox"  class="h-4 w-4 rounded border-gray-300 text-[#06cf86] focus:ring-[#06cf86]" required />
             <span>
               Acepto los <a href="/terms" class="underline">Términos y Condiciones</a>
               y la <a href="/policies" class="underline">Política de Privacidad</a>.
@@ -230,8 +230,10 @@
           </label>
 
           <button (click)="onProceedToCheckout()"
-            class="flex w-full items-center justify-center rounded-lg bg-gradient-to-tl from-[#06cf86] to-[#0b6142] px-5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-[#06cf86]">
-            Ir a Pagar
+            [disabled]="!termsAccepted || isSubmitting"
+            class="flex w-full items-center justify-center rounded-lg bg-gradient-to-tl from-[#06cf86] to-[#0b6142] px-5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-[#06cf86] disabled:opacity-50 disabled:cursor-not-allowed">
+            <span *ngIf="!isSubmitting">Ir a Pagar</span>
+            <span *ngIf="isSubmitting">Procesando...</span>
           </button>
 
           <div class="flex items-center justify-center gap-2">

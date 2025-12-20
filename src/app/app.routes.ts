@@ -9,6 +9,7 @@ import { PaymentComponent } from './payment/payment.component';
 import { PaymentErrorComponent } from './payment/payment-error/payment-error.component';
 import { PpComponent } from './pp/pp.component';
 import { TytComponent } from './tyt/tyt.component';
+import { ErrorConnectionComponent } from './payment/error-connection/error-connection.component';
 
 export const routes: Routes = [
   {
@@ -50,6 +51,11 @@ export const routes: Routes = [
     path: 'payment/error',
     title: 'Zentra | Payment Error',
     component: PaymentErrorComponent,
+  },
+  {
+    path: 'payment/error-connection',
+    title: 'Zentra | Payment Error',
+    component: ErrorConnectionComponent,
   },
   {
     path: 'policies',

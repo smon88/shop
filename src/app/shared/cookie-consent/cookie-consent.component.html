@@ -1,0 +1,35 @@
+@if (show) {
+  <div
+    class="fixed bottom-4 left-10 translate-x-full z-50
+           max-w-xl w-[95%] sm:w-full
+           bg-white border border-gray-200 shadow-lg rounded-xl p-4"
+  >
+    <p class="text-sm text-gray-700">
+      Usamos cookies propias y de terceros para mejorar tu experiencia,
+      analizar el tráfico y personalizar contenido.
+      Al continuar navegando aceptas el uso de cookies.
+      <a routerLink="/policies" class="underline text-gray-800">
+        Ver más
+      </a>
+    </p>
+
+    <div class="mt-3 flex flex-col sm:flex-row gap-2 justify-end">
+      <button
+        (click)="rejectCookies()"
+        class="px-4 py-2 text-sm rounded-md border border-gray-300
+               text-gray-700 hover:bg-gray-100 transition"
+      >
+        Rechazar
+      </button>
+
+      <button
+        (click)="acceptCookies()"
+        class="px-4 py-2 text-sm rounded-md text-white
+               bg-gradient-to-tl from-[#06cf86] to-[#0b6142]
+               hover:opacity-90 transition"
+      >
+        Aceptar
+      </button>
+    </div>
+  </div>
+}

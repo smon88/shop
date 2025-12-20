@@ -1,8 +1,9 @@
 import { Component, OnInit } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-payment-error',
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './payment-error.component.html',
   styleUrl: './payment-error.component.css'
 })
@@ -14,7 +15,7 @@ export class PaymentErrorComponent implements OnInit{
     localStorage.removeItem('m')
     setTimeout(() => {
       location.href = "/";
-    }, 7000)
+    }, 9000)
   }
 
 }

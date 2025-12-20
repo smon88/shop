@@ -1,4 +1,6 @@
-<header class="sticky top-0 z-50 bg-white/90 ">
+<header class="sticky top-0 z-50 bg-white/90 transition-transform duration-300 ease-out will-change-transform"
+  [class.-translate-y-full]="hideNavbar"
+  [class.translate-y-0]="!hideNavbar">
   <nav class="bg-white border-b border-gray-200">
     <div class="max-w-screen-lg flex flex-wrap items-center justify-between mx-auto px-4">
       <a routerLink="/" aria-label="Logo">
@@ -84,7 +86,7 @@
 <div
   *ngIf="mobileMenuOpen"
   (click)="closeMobileMenu()"
-  class="fixed inset-0 z-40 bg-black/30 backdrop-blur-[1px] md:hidden"
+  class="fixed inset-0 z-40 backdrop-blur-[1px] md:hidden"
 ></div>
 
 <!-- Mobile Menu (slide-down moderno) -->
@@ -122,4 +124,5 @@
     </div>
   </div>
 </div>
+<img src="/img/banner-cr.webp" alt="">
 </header>

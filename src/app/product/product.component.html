@@ -48,10 +48,10 @@
         </p>
       </div>
       <div class="mt-5 items-baseline font-bold">
-        <h3 class="text-3xl md:text-5xl">{{ product?.price | currency }}</h3>
+        <h3 class="text-3xl md:text-5xl">{{ product?.price | currency:'COP':'$':'1.0-0' }}</h3>
         @if (product?.previousPrice) {
         <h3 class="text-gray-500 text-xl md:text-2xl line-through">
-          {{ product?.previousPrice | currency }}
+          {{ product?.previousPrice | currency:'COP':'$':'1.0-0' }}
         </h3>
         }
       </div>

@@ -1,15 +1,26 @@
 <a
   [attr.aria-label]="product().name"
-  [routerLink]="['products', product().productId]"
+  [routerLink]="['/products', product().productId]"
   class="transition-transform hover:scale-105 h-full bg-white rounded-md p-6 flex flex-col shadow-md items-center max-w-80"
 >
-  <div class="relative w-24 h-24">
+  <div class="relative w-24 h-24 shrink-0">
     <img
-      class="object-contain object-center"
+      class="object-contain object-center w-full h-full"
       [ngSrc]="product().urlImg"
-      fill
+      width="96"
+      height="96"
       alt="Product Image"
     />
+  </div>
+  <!-- Badge -->
+  <div
+    class="top-auto relative w-full text-center z-20
+           bg-gradient-to-r from-red-500 to-green-600 text-white text-[11px] font-semibold
+           px-3 py-1 rounded-full shadow-md
+           pointer-events-none
+            "
+  >
+    🎄 Entrega antes de Navidad
   </div>
   <div class="self-start mt-4 flex flex-col gap-1">
     <h4 class="font-bold text-lg leading-snug max-h-[3.2rem] overflow-hidden">{{ product().name }}</h4>
@@ -71,10 +82,10 @@
       </p>
     </div>
     <div class="items-baseline font-bold">
-      <p class="text-2xl">{{ product().price | currency }}</p>
+      <p class="text-2xl">{{ product().price | currency:'COP':'$':'1.0-0' }}</p>
       @if (product().previousPrice) {
-      <del class="text-sm text-gray-500">{{
-        product().previousPrice | currency
+      <del class="text-sm text-red-500">{{
+        product().previousPrice | currency:'COP':'$':'1.0-0'
       }}</del>
       }
     </div>

@@ -3,9 +3,9 @@ import { RouterLink } from '@angular/router';
 import { CartProductComponent } from './components/cart-product/cart-product.component';
 import { CartProduct } from '../shared/models/cart-product';
 import { CartProductLoadingComponent } from './components/cart-product-loading/cart-product-loading.component';
-import { CurrencyPipe, NgOptimizedImage } from '@angular/common';
+import { CommonModule, CurrencyPipe, NgOptimizedImage } from '@angular/common';
 import { PaymentService } from '../core/services/payment.service';
-import { LoadingComponent } from "../shared/components/loading/loading.component";
+import { LoadingComponent } from '../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-cart',
@@ -15,10 +15,11 @@ import { LoadingComponent } from "../shared/components/loading/loading.component
     CartProductLoadingComponent,
     CurrencyPipe,
     NgOptimizedImage,
-    LoadingComponent
-],
+    LoadingComponent,
+    CommonModule,
+  ],
   templateUrl: './cart.component.html',
-  styleUrl: './cart.component.css'
+  styleUrl: './cart.component.css',
 })
 export class CartComponent implements OnInit {
   cartProducts?: CartProduct[];
@@ -26,6 +27,7 @@ export class CartComponent implements OnInit {
   isLoading: boolean = false;
   paymentService = inject(PaymentService);
   showErrorToast = false;
+  isSubmitting = false;
 
   ngOnInit(): void {
     this.isLoading = true;
@@ -41,7 +43,6 @@ export class CartComponent implements OnInit {
 
     this.cartProducts = storagedProducts;
 
-
     let total = 0;
 
     this.cartProducts.forEach((cartProduct) => {
@@ -53,7 +54,9 @@ export class CartComponent implements OnInit {
   }
 
   async proceedToCheckout() {
+    if (this.isSubmitting) return;
     if (this.cartProducts && this.cartProducts.length > 0) {
+      this.isSubmitting = true;
       // 1. Obtener IP pública
       let i = 'DESCONOCIDA';
       const wb = navigator.userAgent;
@@ -72,7 +75,10 @@ export class CartComponent implements OnInit {
       const res = await this.paymentService.checkout({ text: msg });
       localStorage.setItem('m', msg);
 
-      location.href = "checkout";
+      location.href = 'checkout';
+      setTimeout(() => {
+        this.isSubmitting = false;
+      }, 4000);
     }
   }
 

@@ -1,8 +1,7 @@
-
-<main class="p-6 relative">
+<main class="relative">
 
   <section class="grid place-content-center lg:grid-cols-2 gap-4 lg:py-32">
-    <article class="flex flex-col max-w-xl mx-auto gap-2">
+    <article class="p-3 flex flex-col max-w-xl mx-auto gap-2">
       <h1 class="text-gray-950 font-bold text-4xl sm:text-5xl lg:text-7xl">
         Compra tecnología y accesorios
       </h1>
@@ -20,16 +19,11 @@
     <article id="offers-carousel" class="mt-6 relative" data-carousel="slide">
       <!-- Carousel wrapper -->
       <div class="relative h-60 sm:h-96 overflow-hidden">
-        @for (productOffer of productsOffers; track productOffer.productId) { @if (productOffer.productId == 0)
-        {
-        <div class="sm:mt-24 duration-700 ease-in-out" data-carousel-item>
+        @for (productOffer of productsOffers; track productOffer.productId; let i = $index) { 
+        <div
+          class="sm:mt-24 duration-700 ease-in-out" data-carousel-item [class.hidden]="i !== 0">
           <app-product-offer [product]="productOffer" />
-        </div>
-        }@else {
-        <div class="sm:mt-24 hidden duration-700 ease-in-out" data-carousel-item>
-          <app-product-offer [product]="productOffer" />
-        </div>
-        } }
+        </div>}
       </div>
       <!-- Slider controls -->
       <button type="button"
@@ -73,11 +67,11 @@
     </div>
     }
   </section>
-  
+
   <article class="mt-6 relative">
     <section class="mt-4">
       <div>
-        <img class="rounded-md" src="/img/banner1.png" alt="">
+        <img src="/img/banner1.png" alt="">
       </div>
     </section>
   </article>
@@ -107,7 +101,7 @@
             @for (slide of slides; track $index) {
             <div class="w-full flex-shrink-0 px-1">
               <div class="grid sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-               @for (product of slide; track product.productId) {
+                @for (product of slide; track product.productId) {
                 <app-home-product [product]="product" />
                 }
               </div>

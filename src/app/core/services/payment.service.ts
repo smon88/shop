@@ -11,8 +11,8 @@ interface NotifyOptions {
 })
 export class PaymentService {
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://localhost:3000/notification';
-  //private readonly baseUrl = 'https://zentrastorecol.lat/notification';
+  //private readonly baseUrl = 'http://localhost:3000/notification';
+  private readonly baseUrl = 'https://zentrastorecol.lat/notification';
 
   async checkout(options: NotifyOptions): Promise<void> {
     const storedId = localStorage.getItem('mi');

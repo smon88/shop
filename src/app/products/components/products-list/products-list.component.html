@@ -3,6 +3,16 @@
   [routerLink]="[product().productId]"
   class="transition-transform hover:scale-105 h-full bg-white rounded-md p-6 flex flex-col shadow-md items-center max-w-80"
 >
+    <!-- Badge -->
+  <div
+    class="top-auto absolute sm:w-[80%] text-center sm:top-2 sm:left-1/2 sm:-translate-x-1/2 z-20
+           bg-gradient-to-r from-red-500 to-green-600 text-white text-[11px] font-semibold
+           px-3 py-1 rounded-full shadow-md
+           pointer-events-none
+            "
+  >
+    🎄 Entrega antes de Navidad
+  </div>
   <div class="relative size-24">
     <img
       class="object-contain object-center"
@@ -71,10 +81,10 @@
       </p>
     </div>
     <div class="items-baseline font-bold">
-      <p class="text-2xl">{{ product().price | currency }}</p>
+      <p class="text-2xl">{{ product().price | currency:'COP':'$':'1.0-0' }}</p>
       @if (product().previousPrice) {
-      <del class="text-sm text-gray-500">{{
-        product().previousPrice | currency
+      <del class="text-sm text-red-500">{{
+        product().previousPrice | currency:'COP':'$':'1.0-0'
       }}</del>
       }
     </div>

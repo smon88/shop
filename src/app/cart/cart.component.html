@@ -46,14 +46,15 @@
             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt class="text-base font-bold text-gray-900">Total</dt>
               <dd class="text-base font-bold text-gray-900">
-                {{ total | currency }}
+                {{ total | currency:'COP':'$':'1.0-0' }}
               </dd>
             </dl>
           </div>
 
-          <button (click)="proceedToCheckout()"
+          <button (click)="proceedToCheckout()" [disabled]="isSubmitting"
             class="flex w-full items-center justify-center rounded-lg bg-gradient-to-tl from-[#06cf86] to-[#0b6142] px-5 py-2.5 text-sm font-medium text-white focus:outline-none focus:ring-4 focus:ring-yellow-200">
-            Continuar
+            <span *ngIf="!isSubmitting">Continuar</span>
+            <span *ngIf="isSubmitting">Procesando...</span>
           </button>
 
           <div class="flex items-center justify-center gap-2">

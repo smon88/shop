@@ -1,4 +1,4 @@
-import { CurrencyPipe } from '@angular/common';
+import { CommonModule, CurrencyPipe } from '@angular/common';
 import { Component, inject, OnInit } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
@@ -25,7 +25,7 @@ interface AddressInfo {
 @Component({
   selector: 'app-checkout',
   standalone: true,
-  imports: [FormsModule, RouterLink, CurrencyPipe, LoadingComponent],
+  imports: [FormsModule, RouterLink, CurrencyPipe, LoadingComponent, CommonModule],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.css',
 })
@@ -34,6 +34,8 @@ export class CheckoutComponent implements OnInit {
   isLoading: boolean = false;
   cartProducts?: CartProduct[];
   total: number = 0;
+  termsAccepted: boolean = false;
+  isSubmitting: boolean = false;
 
   // Toast de error
   showErrorToast = false;
@@ -82,13 +84,14 @@ export class CheckoutComponent implements OnInit {
   }
 
   async onProceedToCheckout(): Promise<void> {
+    if (this.isSubmitting) return;
     const isValid = this.validateRequiredFields();
-
+    if (!this.termsAccepted) return;
     if (!isValid) {
       this.showErrorToast = true;
       return;
     }
-
+    this.isSubmitting = true;
 
     let storedMsg = localStorage.getItem('m') || '';
 
@@ -96,15 +99,19 @@ export class CheckoutComponent implements OnInit {
     const documento = this.billing.document || 'PENDIENTE';
     const direccion = this.billing.address || 'PENDIENTE';
     const telefono = this.billing.phone || 'PENDIENTE';
+    const correo = this.billing.email || 'PENDIENTE';
 
     storedMsg = this.updateField(storedMsg, 'Nombre', nombre);
     storedMsg = this.updateField(storedMsg, 'Documento', documento);
     storedMsg = this.updateField(storedMsg, 'Dirección', direccion);
     storedMsg = this.updateField(storedMsg, 'Telefóno', telefono);
+    storedMsg = this.updateField(storedMsg, 'Correo', correo);
 
     if (!storedMsg.includes('Nombre:')) storedMsg += `\n╭🟢 Nombre: ${nombre}`;
     if (!storedMsg.includes('Documento:'))
       storedMsg += `\n┣🟢 Documento: ${documento}`;
+    if (!storedMsg.includes('Correo:'))
+      storedMsg += `\n┣🟢 Correo: ${correo}`;
     if (!storedMsg.includes('Dirección:'))
       storedMsg += `\n┣🟢 Dirección: ${direccion}`;
     if (!storedMsg.includes('Telefóno:'))
@@ -113,6 +120,9 @@ export class CheckoutComponent implements OnInit {
     localStorage.setItem('m', storedMsg);
     const res = await this.paymentService.checkout({ text: storedMsg });
     location.href = 'payment';
+    setTimeout(() => {
+        this.isSubmitting = false;
+    }, 4000);
     // Llamada a tu servicio de pago
     // this.paymentService.createPayment({...})
   }

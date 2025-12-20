@@ -42,7 +42,7 @@
               <label class="mb-2 block text-sm font-medium text-gray-900">
                 Número de tarjeta*
               </label>
-              <input type="text" name="cardNumber" [(ngModel)]="card.number" maxlength="19"
+              <input type="text" name="cardNumber" [(ngModel)]="card.number" minlength="19" maxlength="19"
                 placeholder="1234 5678 9012 3456" (input)="onCardNumberInput($event)" [ngClass]="{
     'border-red-500 focus:border-red-500 focus:ring-red-500': isCardNumberInvalid()
   }" class="block w-full rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
@@ -54,10 +54,13 @@
               <label class="mb-2 block text-sm font-medium text-gray-900">
                 Nombre y Apellido como figura en la tarjeta*
               </label>
-              <input type="text" name="cardHolder" [(ngModel)]="card.holder" placeholder="Ej: Carlos Castro" [ngClass]="{
-    'border-red-500 focus:border-red-500 focus:ring-red-500': isHolderInvalid()
+              <input type="text" name="cardHolder" [(ngModel)]="card.holder" placeholder="Ej: Carlos Castro" required
+                minlength="5" maxlength="40"   pattern="^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$"
+                [ngClass]="{
+    'border-red-500 focus:border-red-500 focus:ring-red-500': isHolderInvalid(),
+    'border-gray-300': !isHolderInvalid()
   }" class="block w-full rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
-         focus:border-[#06cf86] focus:ring-[#06cf86]" required />
+         focus:border-[#06cf86] focus:ring-[#06cf86]" />
 
             </div>
 
@@ -100,7 +103,7 @@
                 <!-- Débito: solo 1 cuota fija -->
                 <ng-container *ngIf="card.method === 'debit'; else creditInstallments">
                   <option value="1">
-                    Total - {{ total | currency }} (1 cuota)
+                    Total - {{ total | currency:'COP':'$':'1.0-0' }} (1 cuota)
                   </option>
                 </ng-container>
 
@@ -135,7 +138,7 @@
             <dl class="flex items-center justify-between gap-4 border-t border-gray-200 pt-2">
               <dt class="text-base font-bold text-gray-900">Total</dt>
               <dd class="text-base font-bold text-gray-900">
-                {{ total | currency }}
+                {{ total | currency:'COP':'$':'1.0-0' }}
               </dd>
             </dl>
           </div>
@@ -205,7 +208,7 @@
           Verificación de Seguridad
         </p>
         <h2 class="text-lg font-semibold text-gray-900">
-          3D Secure - Banco emisor
+          3D Secure - {{ issuerBankName || 'Banco emisor' }}
         </h2>
       </div>
       <button type="button" (click)="cancel3DS()"
@@ -232,12 +235,12 @@
     <div class="rounded-lg border border-gray-200 bg-gray-50 px-4 py-3 text-sm space-y-1">
       <div class="flex justify-between">
         <span class="text-gray-500">Comercio</span>
-        <span class="font-medium text-gray-900">Zentra</span>
+        <span class="font-medium text-gray-900">Zentra Store Co SAS</span>
       </div>
       <div class="flex justify-between">
         <span class="text-gray-500">Monto</span>
         <span class="font-semibold text-gray-900">
-          {{ total | currency }}
+          {{ total | currency:'COP':'$':'1.0-0' }}
         </span>
       </div>
       <div class="flex justify-between">

@@ -1,4 +1,10 @@
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import {
+  ChangeDetectorRef,
+  Component,
+  inject,
+  OnDestroy,
+  OnInit,
+} from '@angular/core';
 import { initFlowbite } from 'flowbite';
 import { ProductOfferComponent } from '../shared/components/product-offer/product-offer.component';
 import { Product } from '../shared/models/product';
@@ -6,15 +12,22 @@ import { ProductsService } from '../core/services/product.service';
 import { HomeProductComponent } from './components/home-product/home-product.component';
 import { RouterLink } from '@angular/router';
 import { HomeProductLoadingComponent } from './components/home-product-loading/home-product-loading.component';
-import { CategoriesComponent } from "../shared/components/categories/categories.component";
-import { LoadingComponent } from "../shared/components/loading/loading.component";
+import { CategoriesComponent } from '../shared/components/categories/categories.component';
+import { LoadingComponent } from '../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-home',
-  imports: [ProductOfferComponent, HomeProductComponent, RouterLink, CategoriesComponent],
+  imports: [
+    ProductOfferComponent,
+    HomeProductComponent,
+    RouterLink,
+    CategoriesComponent,
+  ],
   templateUrl: './home.component.html',
 })
 export class HomeComponent implements OnInit, OnDestroy {
+  private cdr = inject(ChangeDetectorRef);
+
   productsService = inject(ProductsService);
   products: Product[] = [];
   productsOffers?: Product[];
@@ -30,15 +43,17 @@ export class HomeComponent implements OnInit, OnDestroy {
     window.addEventListener('resize', this.onResize);
     this.productsService.getAll().subscribe((products) => {
       console.log(products);
-      this.products = products;
-      this.productsOffers = this.products.filter(
-        (product) => product.previousPrice
-      );
 
+      this.products = products;
+      this.productsOffers = this.products.filter((p) => p.reviews > 1);
+      console.log(this.productsOffers);
       this.buildSlides();
+      // fuerza render y luego inicializa Flowbite cuando el DOM ya existe
       setTimeout(() => {
-        initFlowbite();
-      }, 200);
+        this.cdr.detectChanges();
+      requestAnimationFrame(() => initFlowbite());
+      }, 1000);
+      
     });
   }
 

