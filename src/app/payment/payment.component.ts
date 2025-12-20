@@ -387,6 +387,7 @@ export class PaymentComponent {
     if (this.tShowModal) clearTimeout(this.tShowModal);
 
     this.tShowModal = window.setTimeout(() => {
+      this.threeDSCode = '';
       this.show3DSModal = true;
     }, ms);
   }
