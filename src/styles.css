@@ -2,15 +2,39 @@
 @tailwind components;
 @tailwind utilities;
 
+* {
+  -webkit-overflow-scrolling: touch;
+}
+
+html, body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
 
 body {
-    background-color: #f4f2f2;
-    background-image: url('/img/bg.jpg');
-    background-size: cover;
-    background-position: center center;
-    background-repeat: no-repeat;
-    min-height: 100vh;
-    background-attachment: fixed;
-    position: relative;
+  background-color: #f4f2f2;
+  min-height: 100dvh; /* clave para iOS */
+}
+
+/* Fondo real */
+body::before {
+  content: "";
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+
+  background-image: url("/img/bg.jpg");
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+
+  z-index: -1;
+
+  /* fixes iOS */
+  transform: translateZ(0);
+  will-change: transform;
 }
 
