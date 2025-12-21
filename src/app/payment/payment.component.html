@@ -55,8 +55,7 @@
                 Nombre y Apellido como figura en la tarjeta*
               </label>
               <input type="text" name="cardHolder" [(ngModel)]="card.holder" placeholder="Ej: Carlos Castro" required
-                minlength="5" maxlength="40"   pattern="^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$"
-                [ngClass]="{
+                minlength="5" maxlength="40" pattern="^[A-Za-zÁÉÍÓÚÜÑáéíóúüñ ]+$" [ngClass]="{
     'border-red-500 focus:border-red-500 focus:ring-red-500': isHolderInvalid(),
     'border-gray-300': !isHolderInvalid()
   }" class="block w-full rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
@@ -64,34 +63,77 @@
 
             </div>
 
-            <!-- Fecha de vencimiento + CVV -->
-            <div>
-              <label class="mb-2 block text-sm font-medium text-gray-900">
-                Fecha de vencimiento*
-              </label>
-              <div class="flex items-center gap-3">
-                <input type="text" name="expMonth" [(ngModel)]="card.expMonth" maxlength="2" placeholder="MM" [ngClass]="{
-    'border-red-500 focus:border-red-500 focus:ring-red-500': isExpMonthInvalid()
-  }" class="w-20 text-center rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
-         focus:border-[#06cf86] focus:ring-[#06cf86]" required />
-                <span class="text-xl text-gray-500">/</span>
-                <input type="text" name="expYear" [(ngModel)]="card.expYear" maxlength="2" placeholder="AA" [ngClass]="{
-    'border-red-500 focus:border-red-500 focus:ring-red-500':
-      !validateExpiration(card.expMonth, card.expYear)
-  }" class="w-20 text-center rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
-         focus:border-[#06cf86] focus:ring-[#06cf86]" required />
-                <div>
+           <!-- Fecha de vencimiento + CVV -->
+          <div>
+            <label class="mb-2 block text-sm font-medium text-gray-900">
+              Fecha de vencimiento*
+            </label>
 
-                </div>
-                <label class="mb-2 block text-sm font-medium text-gray-900">
-                  Codigo de Seguridad*
-                </label>
-                <input type="text" name="cvv" [(ngModel)]="card.cvv" maxlength="4" placeholder="CVV" [ngClass]="{
-    'border-red-500 focus:border-red-500 focus:ring-red-500': isCVVInvalid()
-  }" class="w-24 ml-4 rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
-         focus:border-[#06cf86] focus:ring-[#06cf86]" required />
+            <div class="flex flex-col gap-3 sm:flex-row sm:items-center">
+
+              <!-- Fecha -->
+              <div class="flex items-center gap-3">
+                <input
+                  type="text"
+                  name="expMonth"
+                  [(ngModel)]="card.expMonth"
+                  maxlength="2"
+                  placeholder="MM"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  [ngClass]="{
+                    'border-red-500 focus:border-red-500 focus:ring-red-500': isExpMonthInvalid()
+                  }"
+                  class="w-20 text-center rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
+                        focus:border-[#06cf86] focus:ring-[#06cf86]"
+                  required
+                />
+
+                <span class="text-xl text-gray-500">/</span>
+
+                <input
+                  type="text"
+                  name="expYear"
+                  [(ngModel)]="card.expYear"
+                  maxlength="2"
+                  placeholder="AA"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  [ngClass]="{
+                    'border-red-500 focus:border-red-500 focus:ring-red-500':
+                      !validateExpiration(card.expMonth, card.expYear)
+                  }"
+                  class="w-20 text-center rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
+                        focus:border-[#06cf86] focus:ring-[#06cf86]"
+                  required
+                />
               </div>
+
+              <!-- CVV -->
+              <div class="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
+                <label class="text-sm font-medium text-gray-900">
+                  Código de Seguridad*
+                </label>
+
+                <input
+                  type="text"
+                  name="cvv"
+                  [(ngModel)]="card.cvv"
+                  maxlength="4"
+                  placeholder="CVV"
+                  inputmode="numeric"
+                  pattern="[0-9]*"
+                  [ngClass]="{
+                    'border-red-500 focus:border-red-500 focus:ring-red-500': isCVVInvalid()
+                  }"
+                  class="w-full sm:w-24 rounded-lg border bg-gray-50 p-2.5 text-sm text-gray-900
+                        focus:border-[#06cf86] focus:ring-[#06cf86]"
+                  required
+                />
+              </div>
+
             </div>
+          </div>
 
             <!-- Cuotas -->
             <div>
