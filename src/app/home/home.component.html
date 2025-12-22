@@ -142,7 +142,7 @@
         <div class="flex justify-center mt-4 gap-2">
           @for (s of slides; track $index) {
           <button class="w-2.5 h-2.5 rounded-full" [class.bg-gray-900]="$index === pageIndex"
-            [class.bg-gray-300]="$index !== pageIndex" (click)="goToPage($index)"></button>
+            [class.bg-gray-400]="$index !== pageIndex" (click)="goToPage($index)"></button>
           }
         </div>
       </article>
