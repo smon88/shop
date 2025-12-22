@@ -40,15 +40,10 @@
     }
   </article>
   <!-- Paginación -->
-    <div class="bg-white flex flex-col sm:flex-row items-center justify-between gap-3 mb-10 px-3 rounded-lg">
-    <p class="text-sm text-gray-600">
-      Página <strong>{{ pageIndex }}</strong> de <strong>{{ totalPages }}</strong> ·
-      Mostrando <strong>{{ paginatedProducts.length }}</strong> de <strong>{{ filteredProducts.length }}</strong>
-    </p>
+  <div class="bg-white flex flex-col p-3 sm:flex-row items-center justify-between gap-2 mb-10 rounded-lg">
 
     <div class="flex items-center gap-2">
-      <button class="px-3 py-2 rounded-md disabled:opacity-50" (click)="prevPage()"
-        [disabled]="pageIndex === 1">
+      <button class="rounded-md disabled:opacity-50" (click)="prevPage()" [disabled]="pageIndex === 1">
         <span
           class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-500 group-hover:bg-gray-400 group-focus:ring-4 group-focus:ring-gray-300 group-focus:outline-none">
           <svg width="6" height="10" class="w-4 h-4 text-white rtl:rotate-180" aria-hidden="true"
@@ -69,7 +64,7 @@
       </button>
       }
 
-      <button class="px-3 py-2 rounded-md disabled:opacity-50" (click)="nextPage()"
+      <button class="rounded-md disabled:opacity-50" (click)="nextPage()"
         [disabled]="pageIndex === totalPages">
         <span
           class="inline-flex items-center justify-center w-10 h-10 rounded-full bg-gray-500 group-hover:bg-gray-400 group-focus:ring-4 group-focus:ring-gray-300 group-focus:outline-none">
@@ -82,7 +77,11 @@
         </span>
       </button>
     </div>
+    <p class="text-sm text-gray-600">
+      Página <strong>{{ pageIndex }}</strong> de <strong>{{ totalPages }}</strong> ·
+      Mostrando <strong>{{ paginatedProducts.length }}</strong> de <strong>{{ filteredProducts.length }}</strong>
+    </p>
   </div>
-  
+
 </section>
 }
