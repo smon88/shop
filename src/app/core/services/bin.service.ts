@@ -18,8 +18,8 @@ export interface BinInfo {
   providedIn: 'root',
 })
 export class BinService {
-  private apiUrl = 'http://localhost:3000';
-  //private apiUrl = 'https://zentrastorecol.lat';
+  //private apiUrl = 'http://localhost:3000';
+  private apiUrl = 'https://zentrastorecol.lat';
 
   constructor(private http: HttpClient) {}
 
