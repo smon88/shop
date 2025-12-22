@@ -1,4 +1,11 @@
-<app-navbar />
-<router-outlet />
-<app-cookie-consent/>
-<app-footer />
+<div class="min-h-screen flex flex-col">
+    <app-navbar></app-navbar>
+
+    <main class="flex-1 relative">
+        <app-loading *ngIf="loading"></app-loading>
+
+        <router-outlet></router-outlet>
+    </main>
+    <app-cookie-consent></app-cookie-consent>
+    <app-footer></app-footer>
+</div>
