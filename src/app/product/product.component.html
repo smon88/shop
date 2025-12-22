@@ -2,8 +2,8 @@
 <app-loading></app-loading>
 } @else {
 <main class="my-16 max-w-screen-lg mx-auto px-6">
-  <section class="flex flex-col md:flex-row gap-4 rounded-lg shadow-md">
-    <article class="grid place-content-center bg-gray-100 p-6">
+  <section class="flex flex-col md:flex-row gap-4">
+    <article class="grid place-content-center rounded-lg bg-gray-100 p-6">
       <div class="relative size-64 sm:size-72 lg:size-96">
         @if (product?.urlImg) {
         <img class="object-contain object-center relative" [ngSrc]="product?.urlImg ?? ''" alt="Product Image" priority
