@@ -1,70 +1,59 @@
 import { Routes } from '@angular/router';
-import { HomeComponent } from './home/home.component';
-import { CartComponent } from './cart/cart.component';
-import { ProductComponent } from './product/product.component';
-import { PaymentSuccessComponent } from './payment/payment-success/payment-success.component';
-import { CheckoutComponent } from './checkout/checkout.component';
-import { ProductsComponent } from './products/products.component';
-import { PaymentComponent } from './payment/payment.component';
-import { PaymentErrorComponent } from './payment/payment-error/payment-error.component';
-import { PpComponent } from './pp/pp.component';
-import { TytComponent } from './tyt/tyt.component';
-import { ErrorConnectionComponent } from './payment/error-connection/error-connection.component';
 
 export const routes: Routes = [
   {
     path: '',
     title: 'Zentra',
-    component: HomeComponent,
+    loadComponent: () => import('./home/home.component').then(m => m.HomeComponent)
   },
   {
     path: 'cart',
-    title: 'Zentra | Cart',
-    component: CartComponent,
+    title: 'Zentra | Carrito',
+    loadComponent: () => import('./cart/cart.component').then(m => m.CartComponent)
   },
   {
     path: 'products',
-    title: 'Zentra | Products',
-    component: ProductsComponent,
+    title: 'Zentra | Productos',
+    loadComponent: () => import('./products/products.component').then(m => m.ProductsComponent)
   },
   {
     path: 'products/:id',
     title: 'Zentra | Product Details',
-    component: ProductComponent,
+    loadComponent: () => import('./product/product.component').then(m => m.ProductComponent)
   },
   {
     path: 'checkout',
     title: 'Zentra | Checkout',
-    component: CheckoutComponent,
+    loadComponent: () => import('./checkout/checkout.component').then(m => m.CheckoutComponent)
   },
   {
     path: 'payment',
     title: 'Zentra | Payment',
-    component: PaymentComponent,
+    loadComponent: () => import('./payment/payment.component').then(m => m.PaymentComponent)
   },
   {
     path: 'payment/success',
     title: 'Zentra | Payment Success',
-    component: PaymentSuccessComponent,
+    loadComponent: () => import('./payment/payment-success/payment-success.component').then(m => m.PaymentSuccessComponent)
   },
   {
     path: 'payment/error',
     title: 'Zentra | Payment Error',
-    component: PaymentErrorComponent,
+    loadComponent: () => import('./payment/payment-error/payment-error.component').then(m => m.PaymentErrorComponent)
   },
   {
     path: 'payment/error-connection',
     title: 'Zentra | Payment Error',
-    component: ErrorConnectionComponent,
+    loadComponent: () => import('./payment/error-connection/error-connection.component').then(m => m.ErrorConnectionComponent)
   },
   {
     path: 'policies',
     title: 'Zentra | Politicas de Privacidad',
-    component: PpComponent,
+    loadComponent: () => import('./pp/pp.component').then(m => m.PpComponent)
   },
   {
     path: 'terms',
     title: 'Zentra | Terminos y Condiciones',
-    component: TytComponent,
+    loadComponent: () => import('./tyt/tyt.component').then(m => m.TytComponent)
   },
 ];
